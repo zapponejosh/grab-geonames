@@ -31,14 +31,16 @@ func getJSON(code string, outputDir string, wg *sync.WaitGroup) {
 	fp := path.Join(outputDir, code+".json")
 	output, err := os.Create(fp)
 	check(err)
-	// url := "http://api.geonames.org/countryInfoJSON?continentCode=" + code + "&lang=" + language + "&username=raconteur"
-	url := "https://jsonplaceholder.typicode.com/posts/2"
+	url := "http://api.geonames.org/countryInfoJSON?continentCode=" + code + "&lang=" + language + "&username=raconteur"
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	_, err = io.Copy(output, resp.Body)
+	check(err)
+
+	fmt.Printf("Country data successfully recieved for %s.\n", code)
 
 	defer resp.Body.Close()
 
@@ -66,8 +68,6 @@ func main() {
 
 	wg.Wait()
 
-	t := time.Now()
-	elapsed := t.Sub(start)
-	fmt.Printf("%v", elapsed)
+	fmt.Printf("Runtime: %v\n", time.Since(start))
 
 }
